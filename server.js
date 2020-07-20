@@ -1,11 +1,11 @@
-const express = require('express');
-const sql = require("mssql");
+const express = require('express')
+const sql = require("mssql")
 
-const PORT = 8080
+const PORT = process.env.PORT || 8080
 
-const app = express();
+const app = express()
 
-app.get('/', function (req, res) {
+app.get('/api/articles', function (req, res) {
 
     // config database
     var config = {
@@ -17,26 +17,32 @@ app.get('/', function (req, res) {
             enableArithAbort: true,
             encrypt: true
         }
-    };
+    }
 
     // connect database
     sql.connect(config, function (err) {
 
-        if (err) console.log(err);
+        if (err) {
+            console.log(err)
+        }
 
         // create Request object
-        var request = new sql.Request();
+        var request = new sql.Request()
 
         // query to the database
-        request.query('select * from Articles', function (err, recordset) {
+        const query = 'SELECT * FROM Articles'
 
-            if (err) console.log(err)
+        request.query(query, function (err, recordDataSet) {
+
+            if (err) {
+                console.log(err)
+            }
 
             // send records as a response
-            res.send(recordset);
+            res.send(recordDataSet)
 
-        });
-    });
-});
+        })
+    })
+})
 
-var server = app.listen(PORT, () => console.log(`Server is starting at port ${PORT}`));
+var server = app.listen(PORT, () => console.log(`Server is starting at port ${PORT}`))
